@@ -1,0 +1,276 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+ otp Int @default(0)
+  password   String
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Constractors {
+  id                  String              @id @default(uuid())
+  name                String
+  radonName String @default("")
+  TCM String @default("")
+  email               String              @unique
+  password            String
+  phoneNumber         String
+  refererCode         String              @default("")
+  levelOfExperience   String
+  contry              String
+  city                String
+  referingPoints      Int?                @default(0)
+  imageUrl            String?
+  dateOfBirth         String
+  otp                 Int
+  smsOtp              Int?
+  nickName            String              @unique
+  gender              String
+  brokerage_firm_name String?
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  active              Boolean             @default(true)
+  isVerfy             Boolean             @default(false)
+  isDoubleVerfy       Boolean?            @default(false)
+  phoneId             String
+  subsribtion_email   Boolean             @default(true)
+  contactWith         String
+  language            String              @default("en")
+  course_constractor  CourseConstractor[]
+  contentConstactor   ContentConstactor[]
+  contract            Contract?
+}
+
+model CourseConstractor {
+  id            Int          @id @default(autoincrement())
+  constractorId String
+  subCourseId   Int
+  renewalNum Int @default(0)
+  status        String
+  finished      DateTime?
+  repeated      Int          @default(0)
+  created_at    DateTime     @default(now())
+  token         Tokens[]
+  violanceText String @default("")
+  violanceNum Int @default(0)
+  active        Boolean      @default(true)
+  constractor   Constractors @relation(fields: [constractorId], references: [id])
+  subCourse     SubCourses   @relation(fields: [subCourseId], references: [id])
+  Copon         Copon?       @relation(fields: [coponId], references: [id])
+  coponId       Int?
+}
+
+model ContentConstactor {
+  id             Int           @id @default(autoincrement())
+  status         String        @default("Start")
+  created_at     DateTime      @default(now())
+  last_seen      DateTime      @updatedAt
+  repeated       Int           @default(0)
+  Constractors   Constractors? @relation(fields: [constractorsId], references: [id])
+  constractorsId String?
+  Content        Content?      @relation(fields: [contentId], references: [id])
+  contentId      Int?
+  active         Boolean       @default(true)
+}
+
+model Content {
+  id                Int                 @id @default(autoincrement())
+  titleAr           String
+  titleEn           String
+  descriptionAr     String
+  descriptionEn     String
+  videoURL          String
+  isFree            Boolean             @default(false)
+  duration          Float
+  subCourseId       Int
+  contentConstactor ContentConstactor[]
+  active            Boolean             @default(true)
+  created_at        DateTime            @default(now())
+  courses           SubCourses          @relation(fields: [subCourseId], references: [id])
+}
+
+model Course {
+  id            Int          @id @default(autoincrement())
+  titleAr       String
+  titleEn       String
+  descriptionAr String
+  descriptionEn String
+  imgUrl        String
+  active        Boolean      @default(true)
+  created_at    DateTime     @default(now())
+  subCourse     SubCourses[]
+  feedBack      Feedback[]
+}
+
+model SubCourses {
+  id                Int                 @id @default(autoincrement())
+  titleAr           String
+  titleEn           String
+  descriptionAr     String
+  descriptionEn     String
+  imageUrl          String
+  price             Int?
+  isWorkshop        Boolean             @default(false)
+  active            Boolean             @default(true)
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  courseConstractor CourseConstractor[]
+  content           Content[]
+  copons            Copon[]
+  Tokens            Tokens[]
+  Course            Course?             @relation(fields: [courseId], references: [id])
+  courseId          Int?
+}
+
+model Tokens {
+  id                  Int                @id @default(autoincrement())
+  token               String             @unique
+  active              Boolean            @default(true)
+  created_at          DateTime           @default(now())
+  expire_at           DateTime?
+  CourseConstractor   CourseConstractor? @relation(fields: [courseConstractorId], references: [id])
+  courseConstractorId Int?
+  course              SubCourses?        @relation(fields: [subCoursesId], references: [id])
+  subCoursesId        Int?
+}
+
+model Copon {
+  id           Int                 @id @default(autoincrement())
+  text         String              @unique
+  percentage   Int?
+  constValue   Int?
+  target       String              @default("")
+  availableFor Int                 @default(0)
+  created_at   DateTime            @default(now())
+  active       Boolean             @default(true)
+  contract     Contract[]
+  subCourse    CourseConstractor[]
+  SubCourses   SubCourses?         @relation(fields: [subCoursesId], references: [id])
+  subCoursesId Int?
+}
+
+model Payments {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  detail1     String  @default("")
+  detail2     String? @default("")
+  active      Boolean @default(true)
+}
+
+model Contract {
+  id            Int          @id @default(autoincrement())
+  amount        Int
+  Copon         Copon?       @relation(fields: [coponId], references: [id])
+  userName      String?
+  coponId       Int?
+  decision      Boolean?
+  service       String?
+  serviceTitle  String?
+  constractorId String       @unique
+  constractor   Constractors @relation(fields: [constractorId], references: [id])
+  created_at    DateTime     @default(now())
+  active        Boolean      @default(true)
+}
+
+model Ads {
+  id            Int      @id @default(autoincrement())
+  company       String
+  titleAr       String
+  titleEn       String
+  url           String?
+  imgUrl        String
+  descriptionAr String
+  descriptionEn String
+  startFrom     DateTime @default(now())
+  endAt         DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  active        Boolean  @default(true)
+}
+
+model Feedback {
+  id         Int      @id @default(autoincrement())
+  title      String
+  target     String
+  isAudio    Boolean  @default(false)
+  isCertificate Boolean  @default(false)
+  active     Boolean  @default(true)
+  url        String
+  Course     Course?  @relation(fields: [courseId], references: [id])
+  courseId   Int?
+  created_at DateTime @default(now())
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  title      String
+  message    String
+  target     String
+dm Boolean @default(false)  
+sendDate   DateTime
+  status     String   @default("Pending")
+  created_at DateTime @default(now())
+  active     Boolean  @default(true)
+}
+
+model CommonQuestions {
+  id         Int      @id @default(autoincrement())
+  questionEn String
+  questionAR String
+  answerEN   String
+  answerAR   String
+  created_at DateTime @default(now())
+  active     Boolean  @default(true)
+}
+
+model Discount {
+  id         Int      @id @default(autoincrement())
+  target     String
+  target_id  Int?
+  value      Float
+  created_at DateTime @default(now())
+  end_at     DateTime @db.Date
+  active     Boolean  @default(true)
+}
+
+model Visitor {
+  id        Int       @id @default(autoincrement())
+  name      String    @default("User")
+  mobileID  String    @unique
+  entryTime DateTime  @default(now())
+  exitTime  DateTime?
+}
+
+// Model Venom Data
+
+model VenomData {
+  id      Int     @id @default(autoincrement())
+  traders Int     @default(0)
+  users   Int     @default(0)
+  toper   Int     @default(0)
+  created_at DateTime @default(now())
+  active  Boolean @default(true)
+}
+
+// Model Annousments Data
+
+model Annousments {
+  id     Int     @id @default(autoincrement())
+  imgURL String  @default("")
+  active Boolean @default(true)
+}

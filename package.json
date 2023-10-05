@@ -1,0 +1,52 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "description": "Xenon Courses",
+  "main": "index.js",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "scripts": {
+    "start": "nodemon prisma/index.ts",
+    "dev": "ts-node prisma/index.ts",
+    "report": "npx ts-node reports/sendReport.ts",
+    "notification": "ts-node notification/sendToAll.ts"
+  },
+  "author": "CoderKnight",
+  "keywords": [],
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.10.1",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^6.9.3",
+    "nodemon": "^2.0.18",
+    "querystring": "^0.2.1",
+    "ts-node": "^10.9.1",
+    "twilio": "^4.14.1",
+    "typescript": "^5.1.6",
+    "validate.js": "^0.13.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.2.0",
+    "@prisma/client": "^5.2.0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^28.1.6",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/moment": "^2.13.0",
+    "@types/node": "^20.5.3",
+    "@types/node-cron": "^3.0.8",
+    "@types/nodemailer": "^6.4.8",
+    "@types/querystringify": "^2.0.0"
+  }
+}
